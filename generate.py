@@ -98,40 +98,205 @@ pricing_categories = [
 ]
 
 service_categories = [
-    "AI and Machine Learning",
-    "Analytics",
-    "Business Applications",
-    "Compute",
-    "Databases",
-    "Developer Tools",
+#    "AI and Machine Learning",
+#    "Analytics",
+#    "Business Applications",
+    ("Compute", 0.43),
+    ("Databases", 0.18),
+#    "Developer Tools",
 #    "Multicloud,"
-    "Identity",
-    "Integration",
+    ("Identity", 0.01),
+#    "Integration",
 #    "Internet of Things",
-    "Management and Governance",
+    ("Management and Governance", 0.05),
 #    "Media",
-    "Migration",
-    "Mobile",
-    "Networking",
-    "Security",
-    "Storage",
-    "Web",
-    "Other"
+#    "Migration",
+#    "Mobile",
+    ("Security", 0.07),
+    ("Storage", 0.11),
+#    "Web",
+    ("Other", 0.15)
 ]
+
+service_categories = {
+    "compute": {
+        "name": "Compute",
+        "market_share": 0.43,
+        "services": {
+            "aws": [
+                "Amazon Elastic Compute Cloud"
+            ],
+            "microsoft": [
+                "Azure Virtual Machines"
+            ],
+            "google": [
+                "Compute Engine"
+            ],
+            "ibm": [
+                "Virtual Servers"
+            ],
+            "oracle": [
+                "Compute"
+            ]
+        }
+    },
+    "databases": {
+        "name": "Databases",
+        "market_share": 0.18,
+        "services": {
+            "aws": [
+                "Amazon Relational Database Service"
+            ],
+            "microsoft": [
+                "Azure SQL Database"
+            ],
+            "google": [
+                "Cloud SQL"
+            ],
+            "ibm": [
+                "Databases for MongoDB"
+            ],
+            "oracle": [
+                "Autonomous Database"
+            ]
+        }
+    },
+    "identity": {
+        "name": "Identity",
+        "market_share": 0.01,
+        "services": {
+            "aws": [
+                "Amazon Cognito"
+            ],
+            "microsoft": [
+                "Azure Active Directory"
+            ],
+            "google": [
+                "Identity Platform"
+            ],
+            "ibm": [
+                "App ID"
+            ],
+            "oracle": [
+                "Identity Cloud Service"
+            ]
+        }
+    },
+    "management_and_governance": {
+        "name": "Management and Governance",
+        "market_share": 0.05,
+        "services": {
+            "aws": [
+                "Amazon CloudWatch"
+            ],
+            "microsoft": [
+                "Azure Monitor"
+            ],
+            "google": [
+                "Cloud Monitoring"
+            ],
+            "ibm": [
+                "Cloud Pak for Multicloud Management"
+            ],
+            "oracle": [
+                "Management Cloud"
+            ]
+        }
+    },
+    "security": {
+        "name": "Security",
+        "market_share": 0.07,
+        "services": {
+            "aws": [
+                "Amazon GuardDuty"
+            ],
+            "microsoft": [
+                "Azure Security Center"
+            ],
+            "google": [
+                "Cloud Armor"
+            ],
+            "ibm": [
+                "Cloud Pak for Security"
+            ],
+            "oracle": [
+                "Cloud Guard"
+            ]
+        }
+    },
+    "storage": {
+        "name": "Storage",
+        "market_share": 0.11,
+        "services": {
+            "aws": [
+                "Amazon Simple Storage Service"
+            ],
+            "microsoft": [
+                "Azure Blob Storage"
+            ],
+            "google": [
+                "Cloud Storage"
+            ],
+            "ibm": [
+                "Cloud Object Storage"
+            ],
+            "oracle": [
+                "Object Storage"
+            ]
+        }
+    },
+    "other": {
+        "name": "Other",
+        "market_share": 0.15,
+        "services": {
+            "aws": [
+                "Amazon Simple Email Service"
+            ],
+            "microsoft": [
+                "Azure DevOps"
+            ],
+            "google": [
+                "Cloud Functions"
+            ],
+            "ibm": [
+                "Watson Assistant"
+            ],
+            "oracle": [
+                "API Gateway"
+            ]
+        }
+    }
+}
 
 cloud_providers_ordered_dict = []
 for key, provider in cloud_providers.items():
     cloud_providers_ordered_dict.append((key, provider["market_share"]))
 
-team_names = []
+service_categories_ordered_dict = []
+for key, category in service_categories.items():
+    service_categories_ordered_dict.append((key, category["market_share"]))
+
 for i in range(5):
-    team_name = fake.color_name()
-    team_names.append(team_name)
+    team_name = fake.bs().replace(" ", "-").lower()
     cloud_providers["aws"]["accounts"][team_name] = fake.random_int(min=100000000000, max=999999999999)
+    
+    team_name = fake.bs().replace(" ", "-").lower()
     cloud_providers["microsoft"]["accounts"][team_name] = fake.random_int(min=100000000000, max=999999999999)
+    
+    team_name = fake.bs().replace(" ", "-").lower()
     cloud_providers["google"]["accounts"][team_name] = fake.random_int(min=100000000000, max=999999999999)
+    
+    team_name = fake.bs().replace(" ", "-").lower()
     cloud_providers["ibm"]["accounts"][team_name] = fake.random_int(min=100000000000, max=999999999999)
+    
+    team_name = fake.bs().replace(" ", "-").lower()
     cloud_providers["oracle"]["accounts"][team_name] = fake.random_int(min=100000000000, max=999999999999)
+
+projects = [
+    (fake.color_name(), 0.52),
+    (fake.color_name(), 0.32),
+    (fake.color_name(), 0.16),
+]
 
 date_start = datetime.date(2024, 1, 1)
 date_end = datetime.date.today()
@@ -142,18 +307,18 @@ for i in range(num_records):
     cost = fake.pyfloat(right_digits=2, min_value=0.01, max_value=1000.00)
     provider = fake.random_element(elements=OrderedDict(cloud_providers_ordered_dict))
     account = fake.random_element(elements=OrderedDict(cloud_providers[provider]["accounts"]))
+    unit = fake.random_element(elements=units)
+    quantity = fake.pyfloat(right_digits=4, min_value=0.0001, max_value=5000.0000)
+    service_category = fake.random_element(elements=OrderedDict(service_categories_ordered_dict))
 
     date = fake.date_between_dates(date_start, date_end)
     billing_period_start = datetime.date(date.year, date.month, 1) 
     billing_period_end = billing_period_start + relativedelta(months=1)
 
-    unit = fake.random_element(elements=units)
-    quantity = fake.pyfloat(right_digits=4, min_value=0.0001, max_value=5000.0000)
-
     record = {
         "BilledCost": cost,
         "BillingAccountId": cloud_providers[provider]["billing_account_id"],
-        "BillingAccountName": account,
+        "BillingAccountName": "Root", 
         "BillingCurrency": "USD",
         "BillingPeriodEnd": billing_period_end,
         "BillingPeriodStart": billing_period_start,
@@ -186,23 +351,22 @@ for i in range(num_records):
         "ResourceId": "",
         "ResourceName": "",
         "ResourceType": "",
-        "ServiceCategory": fake.random_element(elements=service_categories),
-        "ServiceName": fake.name(),
+        "ServiceCategory": service_categories[service_category]["name"],
+        # TODO: Add more services and make this random, weighted
+        "ServiceName": service_categories[service_category]["services"][provider][0],
         "SkuId": fake.pystr(min_chars=10, max_chars=10),
         "SkuPriceId": fake.pystr(min_chars=10, max_chars=10) + "." + fake.pystr(min_chars=10, max_chars=10) + "." + fake.pystr(min_chars=10, max_chars=10),
         "SubAccountId": cloud_providers[provider]["accounts"][account],
         "SubAccountName": account,
-        "Tags": "{}"
+        "Tags": {
+            "user_billing_owner": "Finance",
+            "user_billing_project": fake.random_element(elements=OrderedDict(projects)),
+        }
     }
     data.append(record)
 
-# Print the generated data
-#import json
-#print(json.dumps(data, indent=4))
-
+# Write the data as a CSV
 with open("data.csv", "w") as f:
     writer = csv.DictWriter(f, fieldnames=data[0].keys())
     writer.writeheader()
     writer.writerows(data)
-    #for record in data:
-    #    writer.writerow(record)
