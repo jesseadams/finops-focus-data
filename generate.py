@@ -28,9 +28,9 @@ cloud_providers = {
         "billing_account_id": fake.random_int(min=100000000000, max=999999999999),
         "accounts": {},
         "regions": [
-            "us-east-1",
-            "us-east-2",
-            "us-west-2"
+            ("us-east-1", 0.69),
+            ("us-east-2", 0.21),
+            ("us-west-2", 0.10)
         ]
     },
     "microsoft": {
@@ -39,9 +39,9 @@ cloud_providers = {
         "billing_account_id": fake.random_int(min=100000000000, max=999999999999),
         "accounts": {},
         "regions": [
-            "eastus",
-            "westus",
-            "centralus"
+            ("eastus", 0.43),
+            ("westus", 0.42),
+            ("centralus", 0.15)
         ]
     },
     "google": {
@@ -50,9 +50,9 @@ cloud_providers = {
         "billing_account_id": fake.random_int(min=100000000000, max=999999999999),
         "accounts": {},
         "regions": [
-            "us-central1",
-            "us-east1",
-            "us-west1"
+            ("us-central1", 0.78),
+            ("us-east1", 0.13),
+            ("us-west1", 0.09)
         ]
     },
     "ibm": {
@@ -61,9 +61,9 @@ cloud_providers = {
         "billing_account_id": fake.random_int(min=100000000000, max=999999999999),
         "accounts": {},
         "regions": [
-            "us-south",
-            "us-east",
-            "us-west"
+            ("us-south", 0.55),
+            ("us-east", 0.22),
+            ("us-west", 0.23)
         ]
     },
     "oracle": {
@@ -72,9 +72,9 @@ cloud_providers = {
         "billing_account_id": fake.random_int(min=100000000000, max=999999999999),
         "accounts": {},
         "regions": [
-            "us-ashburn-1",
-            "us-phoenix-1",
-            "us-saopaulo-1"
+            ("us-ashburn-1", 0.25),
+            ("us-phoenix-1", 0.30),
+            ("us-saopaulo-1", 0.40)
         ]
     }
 }
@@ -346,7 +346,7 @@ for i in range(num_records):
         "PricingUnit": unit,
         "ProviderName": cloud_providers[provider]["name"],
         "PublisherName": cloud_providers[provider]["name"],
-        "RegionId": fake.random_element(elements=cloud_providers[provider]["regions"]),
+        "RegionId": fake.random_element(elements=OrderedDict(cloud_providers[provider]["regions"])),
         "RegionName": "",
         "ResourceId": "",
         "ResourceName": "",
