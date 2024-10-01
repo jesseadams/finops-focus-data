@@ -6,6 +6,7 @@ from collections import OrderedDict
 from dateutil.relativedelta import relativedelta
 import csv
 import datetime
+import uuid
 
 fake = Faker()
 Faker.seed(1337)
@@ -36,7 +37,7 @@ cloud_providers = {
     "microsoft": {
         "name": "Microsoft Corporation",
         "market_share": 0.22,
-        "billing_account_id": fake.random_int(min=100000000000, max=999999999999),
+        "billing_account_id": f'/providers/Microsoft.Billing/billingAccounts/{uuid.uuid4()}:{uuid.uuid4()}_2019-05-31/billingProfiles/BRUX-63NR-BG7-PGB',
         "accounts": {},
         "regions": [
             ("eastus", 0.43),
@@ -281,6 +282,7 @@ for i in range(5):
     cloud_providers["aws"]["accounts"][team_name] = fake.random_int(min=100000000000, max=999999999999)
     
     team_name = fake.bs().replace(" ", "-").lower()
+    # TODO: f'/subscriptions/{uuid.uuid4()}'
     cloud_providers["microsoft"]["accounts"][team_name] = fake.random_int(min=100000000000, max=999999999999)
     
     team_name = fake.bs().replace(" ", "-").lower()
@@ -311,14 +313,19 @@ for i in range(num_records):
     quantity = fake.pyfloat(right_digits=4, min_value=0.0001, max_value=5000.0000)
     service_category = fake.random_element(elements=OrderedDict(service_categories_ordered_dict))
 
-    date = fake.date_between_dates(date_start, date_end)
+    if i < 25000:
+        # Simulate a spike in usage
+        date = datetime.date(2024, 3, 1)
+    else:
+        date = fake.date_between_dates(date_start, date_end)
+
     billing_period_start = datetime.date(date.year, date.month, 1) 
     billing_period_end = billing_period_start + relativedelta(months=1)
 
     record = {
         "BilledCost": cost,
         "BillingAccountId": cloud_providers[provider]["billing_account_id"],
-        "BillingAccountName": "Root", 
+        "BillingAccountName": "Main Billing Account", 
         "BillingCurrency": "USD",
         "BillingPeriodEnd": billing_period_end,
         "BillingPeriodStart": billing_period_start,
