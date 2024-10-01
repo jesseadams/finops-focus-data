@@ -313,7 +313,7 @@ for i in range(num_records):
     quantity = fake.pyfloat(right_digits=4, min_value=0.0001, max_value=5000.0000)
     service_category = fake.random_element(elements=OrderedDict(service_categories_ordered_dict))
 
-    if i < 25000:
+    if i < 10000:
         # Simulate a spike in usage
         date = datetime.date(2024, 3, 1)
     else:
